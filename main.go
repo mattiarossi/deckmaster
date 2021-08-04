@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"sync"
 	"time"
 
@@ -18,51 +17,12 @@ var (
 	dev      streamdeck.Device
 	dbusConn *dbus.Conn
 	keyboard uinput.Keyboard
-	x        Xorg
 
 	deck          *Deck
-	recentWindows []Window
 
 	deckFile   = flag.String("deck", "deckmaster.deck", "path to deck config file")
 	brightness = flag.Uint("brightness", 80, "brightness in percent")
 )
-
-func handleActiveWindowChanged(_ streamdeck.Device, event ActiveWindowChangedEvent) {
-	fmt.Printf("Active window changed to %s (%d, %s)\n",
-		event.Window.Class, event.Window.ID, event.Window.Name)
-
-	// remove dupes
-	i := 0
-	for _, rw := range recentWindows {
-		if rw.ID == event.Window.ID {
-			continue
-		}
-
-		recentWindows[i] = rw
-		i++
-	}
-	recentWindows = recentWindows[:i]
-
-	recentWindows = append([]Window{event.Window}, recentWindows...)
-	if len(recentWindows) > 15 {
-		recentWindows = recentWindows[0:15]
-	}
-	deck.updateWidgets()
-}
-
-func handleWindowClosed(dev streamdeck.Device, event WindowClosedEvent) {
-	i := 0
-	for _, rw := range recentWindows {
-		if rw.ID == event.Window.ID {
-			continue
-		}
-
-		recentWindows[i] = rw
-		i++
-	}
-	recentWindows = recentWindows[:i]
-	deck.updateWidgets()
-}
 
 func main() {
 	flag.Parse()
@@ -77,12 +37,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	x = Connect(os.Getenv("DISPLAY"))
-	defer x.Close()
-
-	tch := make(chan interface{})
-	x.TrackWindows(tch, time.Second)
 
 	d, err := streamdeck.Devices()
 	if err != nil {
@@ -166,7 +120,7 @@ func main() {
 				// key was pressed
 				go func() {
 					// launch timer to observe keystate
-					time.Sleep(200 * time.Millisecond)
+					time.Sleep(500 * time.Millisecond)
 
 					if state, ok := keyStates.Load(k.Index); ok && state.(bool) {
 						// key still pressed
@@ -176,15 +130,6 @@ func main() {
 				}()
 			}
 			keyTimestamps[k.Index] = time.Now()
-
-		case e := <-tch:
-			switch event := e.(type) {
-			case WindowClosedEvent:
-				handleWindowClosed(dev, event)
-
-			case ActiveWindowChangedEvent:
-				handleActiveWindowChanged(dev, event)
-			}
 		}
 	}
 }

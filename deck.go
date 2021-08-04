@@ -127,7 +127,7 @@ func (d *Deck) triggerAction(index uint8, hold bool) {
 					go executeCommand(a.Exec)
 				}
 			} else {
-				w.TriggerAction()
+				w.TriggerAction(hold)
 			}
 		}
 	}

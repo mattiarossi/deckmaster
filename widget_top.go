@@ -71,8 +71,8 @@ func (w *TopWidget) Update(dev *streamdeck.Device) {
 		&image.Uniform{fill},
 		image.Point{}, draw.Src)
 
-	drawString(img, ttfFont, strconv.FormatInt(int64(value), 10), 12, freetype.Pt(-1, -1))
-	drawString(img, ttfFont, "% "+label, 7, freetype.Pt(-1, img.Bounds().Dx()-4))
+	drawString(img, ttfFont, strconv.FormatInt(int64(value), 10), 12, freetype.Pt(-1, -1), color.RGBA{255, 255, 255, 255})
+	drawString(img, ttfFont, "% "+label, 7, freetype.Pt(-1, img.Bounds().Dx()-4), color.RGBA{255, 255, 255, 255})
 
 	err = dev.SetImage(w.key, img)
 	if err != nil {

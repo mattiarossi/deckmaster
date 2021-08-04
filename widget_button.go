@@ -4,6 +4,7 @@ import (
 	"image"
 	"log"
 	"sync"
+	"image/color"
 
 	"github.com/golang/freetype"
 	"github.com/muesli/streamdeck"
@@ -22,10 +23,11 @@ func (w *ButtonWidget) Update(dev *streamdeck.Device) {
 		img := image.NewRGBA(image.Rect(0, 0, 72, 72))
 		if w.label != "" {
 			_ = drawImage(img, w.icon, 48, 12, 4)
-			drawString(img, ttfFont, w.label, 8, freetype.Pt(-1, img.Bounds().Dx()-6))
+			drawString(img, ttfFont, w.label, 8, freetype.Pt(-1, img.Bounds().Dx()-6),color.RGBA{255, 255, 255, 255})
 		} else {
 			_ = drawImage(img, w.icon, 64, 4, 4)
 		}
+		log.Println("Setimage: ",w.icon, w.key)
 
 		err := dev.SetImage(w.key, img)
 		if err != nil {

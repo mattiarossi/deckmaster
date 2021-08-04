@@ -1,13 +1,15 @@
 [[keys]]
-  index = 0
+  index = 14
   [keys.widget]
     id = "top"
     [keys.widget.config]
       mode = "cpu"
       fillColor = "#d497de"
+    [keys.action]
+      deck = "decks/cpugraph.deck"
 
 [[keys]]
-  index = 1
+  index = 9
   [keys.widget]
     id = "top"
     [keys.widget.config]
@@ -25,86 +27,119 @@
     id = "clock"
 
 [[keys]]
-  index = 5
-  [keys.widget]
-    id = "button"
-    [keys.widget.config]
-      icon = "assets/volume-low.png"
-      label = "Lower Vol"
-  [keys.action]
-    keycode = "114"
-
-[[keys]]
-  index = 6
-  [keys.widget]
-    id = "button"
-    [keys.widget.config]
-      icon = "assets/volume-high.png"
-      label = "Raise Vol"
-  [keys.action]
-    keycode = "115"
-
-[[keys]]
-  index = 7
-  [keys.widget]
-    id = "button"
-    [keys.widget.config]
-      icon = "assets/emoticons/slightly-smiling-face.png"
-      label = "Emoticons"
-  [keys.action]
-    deck = "decks/emoticons.deck"
-
-[[keys]]
-  index = 8
-  [keys.widget]
-    id = "button"
-    [keys.widget.config]
-      icon = "assets/go-previous.png"
-      label = "Prev Act"
-  [keys.action]
-    exec = "kactivities-cli --previous-activity"
-
-[[keys]]
-  index = 9
-  [keys.widget]
-    id = "button"
-    [keys.widget.config]
-      icon = "assets/go-next.png"
-      label = "Next Act"
-  [keys.action]
-    exec = "kactivities-cli --next-activity"
-
-[[keys]]
   index = 10
   [keys.widget]
-    id = "recentWindow"
+    id = "cpu"
     [keys.widget.config]
-      window = "1"
+      cpu0 = "Cpu0"
+      cpu1 = "Cpu1"
+      cpu2 = "Cpu2"
+      cpu3 = "Cpu3"
 
 [[keys]]
   index = 11
   [keys.widget]
-    id = "recentWindow"
+    id = "cpu"
     [keys.widget.config]
-      window = "2"
+      cpu0 = "Cpu4"
+      cpu1 = "Cpu5"
+      cpu2 = "Cpu6"
+      cpu3 = "Cpu7"
 
 [[keys]]
   index = 12
   [keys.widget]
-    id = "recentWindow"
+    id = "cpu"
     [keys.widget.config]
-      window = "3"
+      cpu0 = "Cpu8"
+      cpu1 = "Cpu9"
+      cpu2 = "Cpu10"
+      cpu3 = "Cpu11"
 
 [[keys]]
   index = 13
   [keys.widget]
-    id = "recentWindow"
+    id = "cpu"
     [keys.widget.config]
-      window = "4"
+      cpu0 = "Cpu12"
+      cpu1 = "Cpu13"
+      cpu2 = "Cpu14"
+      cpu3 = "Cpu15"
 
 [[keys]]
-  index = 14
+  index = 0
   [keys.widget]
-    id = "recentWindow"
+    id = "fan"
     [keys.widget.config]
-      window = "5"
+      fan0 = "fan1"
+      fan1 = "fan3"
+      fan2 = "fan4"
+      fan3 = "fan5"
+      label0 = "CPU"
+      label1 = "OUT"
+      label2 = "GPU"
+      label3 = "IN"
+      device = "it8628-00"
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "temp"
+    [keys.widget.config]
+      temp0 = "temp1"
+      temp1 = "temp2"
+      temp2 = "temp3"
+      temp3 = "temp4"
+      label0 = "MB1"
+      label1 = "MB2"
+      label2 = "CPU"
+      label3 = "MB3"
+      device = "it8628-00"
+
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "pvevm"
+    [keys.widget.config]
+    vmid = "103"
+    vmlabel = "osx"
+    doublearm = "false"
+    updateinterval = "3"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "pvevm"
+    [keys.widget.config]
+    vmid = "100"
+    vmlabel = "games"
+    doublearm = "false"
+    updateinterval = "3"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "pvevm"
+    [keys.widget.config]
+    vmid = "104"
+    vmlabel = "linux01"
+    doublearm = "false"
+    updateinterval = "3"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "pvevm"
+    [keys.widget.config]
+    vmid = "101"
+    vmlabel = "wwork"
+    doublearm = "false"
+    updateinterval = "3"
+
+
+
+[[keys]]
+  index = 128
+  [keys.widget]
+    id = "stats"

@@ -5,10 +5,11 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	_ "image/jpeg"
+	_ "image/png"
 	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/flopp/go-findfont"
 	"github.com/golang/freetype"
@@ -30,7 +31,7 @@ type Widget interface {
 	Update(dev *streamdeck.Device)
 	Action() *ActionConfig
 	ActionHold() *ActionConfig
-	TriggerAction()
+	TriggerAction(bool)
 }
 
 type BaseWidget struct {
@@ -51,7 +52,7 @@ func (w *BaseWidget) ActionHold() *ActionConfig {
 	return w.actionHold
 }
 
-func (w *BaseWidget) TriggerAction() {
+func (w *BaseWidget) TriggerAction(hold bool) {
 }
 
 func NewWidget(index uint8, id string, action *ActionConfig, actionHold *ActionConfig, config map[string]string) Widget {
@@ -71,14 +72,53 @@ func NewWidget(index uint8, id string, action *ActionConfig, actionHold *ActionC
 	case "date":
 		return &DateWidget{bw}
 
-	case "recentWindow":
-		i, err := strconv.ParseUint(config["window"], 10, 64)
-		if err != nil {
-			log.Fatal(err)
-		}
-		return &RecentWindowWidget{
+	case "cpu":
+		return &CpuWidget{
 			BaseWidget: bw,
-			window:     uint8(i),
+			cpu0:       config["cpu0"],
+			cpu1:       config["cpu1"],
+			cpu2:       config["cpu2"],
+			cpu3:       config["cpu3"],
+		}
+
+	case "fan":
+		return &FanWidget{
+			BaseWidget: bw,
+			fan0:       config["fan0"],
+			fan1:       config["fan1"],
+			fan2:       config["fan2"],
+			fan3:       config["fan3"],
+			label0:     config["label0"],
+			label1:     config["label1"],
+			label2:     config["label2"],
+			label3:     config["label3"],
+			device:     config["device"],
+		}
+
+	case "temp":
+		return &TempWidget{
+			BaseWidget: bw,
+			temp0:      config["temp0"],
+			temp1:      config["temp1"],
+			temp2:      config["temp2"],
+			temp3:      config["temp3"],
+			label0:     config["label0"],
+			label1:     config["label1"],
+			label2:     config["label2"],
+			label3:     config["label3"],
+			device:     config["device"],
+		}
+
+	case "pvevm":
+		return &PveVMWidget{
+			BaseWidget:     bw,
+			vmid:           config["vmid"],
+			vmlabel:        config["vmlabel"],
+			doublearm:      config["doublearm"],
+			updateinterval: config["updateinterval"],
+			armed:          false,
+			doublearmed:    false,
+			status:         "init",
 		}
 
 	case "top":
@@ -87,6 +127,10 @@ func NewWidget(index uint8, id string, action *ActionConfig, actionHold *ActionC
 			mode:       config["mode"],
 			fillColor:  config["fillColor"],
 		}
+
+	case "stats":
+		return &StatsWidget{BaseWidget: bw}
+
 	default:
 		// unknown widget ID
 		fmt.Println("Unknown widget with ID:", id)
@@ -96,6 +140,7 @@ func NewWidget(index uint8, id string, action *ActionConfig, actionHold *ActionC
 }
 
 func drawImage(img *image.RGBA, path string, size uint, x uint, y uint) error {
+	log.Println("Drawimage ", path)
 	f, err := os.Open(path)
 	if err != nil {
 		return err
@@ -109,11 +154,12 @@ func drawImage(img *image.RGBA, path string, size uint, x uint, y uint) error {
 
 	icon = resize.Resize(size, size, icon, resize.Bilinear)
 	draw.Draw(img, image.Rect(int(x), int(y), int(x+size), int(y+size)), icon, image.Point{0, 0}, draw.Src)
+	log.Println("Drawimage image drawn")
 
 	return nil
 }
 
-func drawString(img *image.RGBA, ttf *truetype.Font, text string, fontsize float64, pt fixed.Point26_6) {
+func drawString(img *image.RGBA, ttf *truetype.Font, text string, fontsize float64, pt fixed.Point26_6, col color.RGBA) {
 	c := freetype.NewContext()
 	c.SetDPI(124)
 	c.SetFont(ttf)
@@ -142,7 +188,7 @@ func drawString(img *image.RGBA, ttf *truetype.Font, text string, fontsize float
 		pt.X = oldx
 	}
 
-	c.SetSrc(image.NewUniform(color.RGBA{255, 255, 255, 255}))
+	c.SetSrc(image.NewUniform(col))
 	if _, err := c.DrawString(text, pt); err != nil {
 		log.Fatal(err)
 	}
